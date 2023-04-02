@@ -1,13 +1,10 @@
-use std::{ffi::OsStr, path::PathBuf, str::FromStr, ops::Deref};
+use std::{ffi::OsStr, ops::Deref, path::PathBuf, str::FromStr};
 
 use chrono::NaiveDateTime;
 use clap::{Parser, Subcommand};
 use regex::Regex;
 
-use crate::{
-    blog::PostQuery,
-    error::{BlogError, UserError},
-};
+use crate::error::{BlogError, UserError};
 
 #[derive(Debug, Clone)]
 pub struct RepoUrl(String);
@@ -109,7 +106,7 @@ pub enum Verb {
     /// Builds metadata files and pages
     Build,
     /// Print a list of posts for query
-    Posts(PostQuery),
+    Posts, // PostQuery
     /// Mark post published and push it
     Publish,
 }

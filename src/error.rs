@@ -2,19 +2,20 @@ use std::path::PathBuf;
 
 use thiserror::Error;
 
-use crate::blog::Field;
-
 #[derive(Debug, Error)]
 pub enum FormatError {
     #[error("post is empty")]
     EmptyPost,
-    #[error("YAML header is missing")]
-    MissingHeader,
+    #[error("unclosed frontmatter header")]
+    UnclosedFrontmatter,
     #[error("unable to parse {invalid} DateTime")]
-    DateTimeParse{
+    DateTimeParse {
         invalid: String,
         source: chrono::ParseError,
     },
+
+    #[error(transparent)]
+    Render(#[from] handlebars::RenderError),
 
     #[error(transparent)]
     Yaml(#[from] serde_yaml::Error),
