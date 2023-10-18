@@ -8,9 +8,15 @@ Git integration provides edit history for posts.
 
 Sources can have a `yaml` header which starts and ends with a line containing only `---`.
 
-## TODO
+```
+cargo run -- -w ./posts -e svelte build
+```
 
-- [ ] replace `std::fs::read_to_string` with buffersQ
+## Attribution
+
+- Code for rendering `LaTeX` blocks is roughly based on [`just-latex`](https://github.com/ma-chengyuan/just-latex/tree/main) (not yet implemented)
+  - `just-latex` is a pandoc filter while this is intended to be a self
+    contained binary.
 
 ## License
 

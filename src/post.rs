@@ -1,9 +1,13 @@
-use serde::{Deserialize, Serialize};
 use std::{convert::Infallible, default::Default, path::Path, str::FromStr, vec};
 
 use chrono::{DateTime, Utc};
+use render::Render;
+use serde::{Deserialize, Serialize};
 
-use crate::error::{BlogError, FormatError};
+use crate::{
+    component::Parser,
+    error::{BlogError, FormatError},
+};
 
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct Edit {
@@ -90,24 +94,24 @@ impl FromStr for PostInfo {
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[serde(from = "String", into = "String")]
-pub struct PostContent {
+pub struct RawPostContent {
     pub inner: String,
 }
 
-impl PostContent {
-    pub fn new() -> PostContent {
-        PostContent {
+impl RawPostContent {
+    pub fn new() -> RawPostContent {
+        RawPostContent {
             inner: String::new(),
         }
     }
 
-    pub fn open(file: impl AsRef<Path>) -> Result<PostContent, BlogError> {
-        Ok(PostContent {
+    pub fn open(file: impl AsRef<Path>) -> Result<RawPostContent, BlogError> {
+        Ok(RawPostContent {
             inner: std::fs::read_to_string(file)?,
         })
     }
 
-    pub fn take_info(&mut self) -> Result<PostInfo, BlogError> {
+    pub(crate) fn take_info(&mut self) -> Result<PostInfo, BlogError> {
         if self.inner.len() <= 8 {
             return Ok(PostInfo::default());
         }
@@ -140,39 +144,72 @@ impl PostContent {
     }
 }
 
-impl AsRef<str> for PostContent {
+impl AsRef<str> for RawPostContent {
     fn as_ref(&self) -> &str {
         &self.inner
     }
 }
 
-impl From<String> for PostContent {
+impl From<String> for RawPostContent {
     fn from(inner: String) -> Self {
-        PostContent { inner }
+        RawPostContent { inner }
     }
 }
 
-impl Into<String> for PostContent {
+impl Into<String> for RawPostContent {
     fn into(self) -> String {
         self.inner
     }
 }
 
-impl FromStr for PostContent {
+impl FromStr for RawPostContent {
     type Err = Infallible;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(PostContent {
+        Ok(RawPostContent {
             inner: s.to_string(),
         })
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug)]
 pub struct Post {
-    #[serde(flatten)]
     pub info: PostInfo,
-    pub content: PostContent,
+    pub source: String,
 }
 
-impl Post {}
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PostTemplateContext {
+    #[serde(flatten)]
+    pub info: PostInfo,
+    pub content: String,
+}
+
+impl Post {
+    pub fn new(mut raw: RawPostContent) -> Result<Self, BlogError> {
+        Ok(Post {
+            info: raw.take_info()?,
+            source: raw.inner,
+        })
+    }
+
+    pub fn components(&self) -> Parser {
+        Parser::new(&self.source)
+    }
+
+    pub fn template_ctx(self) -> PostTemplateContext {
+        let mut content = String::with_capacity(1024);
+
+        for c in self.components() {
+            c.render_into(&mut content)
+                .expect("post component render should be infallible");
+        }
+
+        content.shrink_to_fit();
+
+        PostTemplateContext {
+            info: self.info,
+            content,
+        }
+    }
+}

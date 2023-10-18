@@ -1,3 +1,13 @@
 [submodule "posts"]
 	path = posts
 	url = git@github.com:Caellian/blog.git
+[submodule "vendored/vendored/render"]
+	path = vendored/vendored/render
+	url = git@github.com:Caellian/render.rs.git
+[submodule "vendored/render"]
+	path = vendored/render
+	url = git@github.com:Caellian/render.rs.git
+[submodule "vendored/pulldown-cmark"]
+	path = vendored/pulldown-cmark
+	url = git@github.com:Caellian/pulldown-cmark.git
+	branch = spanned

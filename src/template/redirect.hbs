@@ -7,11 +7,20 @@
     {{{head}}}
   </head>
   <body>
-    <p id="message">
-      Redirecting to <a href="{{target}}">{{target}}</a> in
-      <span id="delay">JavaScript disabled</span> seconds...
-    </p>
+    <noscript>
+      <p>JavaScript is disabled in your browser so automatic redirection doesn't work.</p>
+      <p>Please click <a href="{{target}}">here</a> to perform a manual redirection like a savage.</p>
+    </noscript>
     <script>
+      const noscriptElement = document.querySelector('noscript');
+      const messageElement = document.createElement('p');
+      messageElement.id = 'message';
+      messageElement.innerHTML = `
+        Redirecting to <a href="{{target}}">{{target}}</a> in
+        <span id="delay">0</span> seconds...
+      `;
+      noscriptElement.replaceWith(messageElement);
+
       const delay_span = document.getElementById("delay");
       function countdown(remaining) {
         delay_span.innerHTML = remaining;

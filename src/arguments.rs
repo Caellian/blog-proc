@@ -1,6 +1,5 @@
-use std::{ffi::OsStr, ops::Deref, path::PathBuf, str::FromStr};
+use std::{ops::Deref, path::PathBuf, str::FromStr};
 
-use chrono::NaiveDateTime;
 use clap::{Parser, Subcommand};
 use regex::Regex;
 
@@ -31,10 +30,6 @@ impl RepoUrl {
             Err(UserError::InvalidRepoUrl(url).into())
         }
     }
-
-    pub unsafe fn new_unchecked(url: impl AsRef<str>) -> RepoUrl {
-        RepoUrl(url.as_ref().to_string())
-    }
 }
 
 impl AsRef<str> for RepoUrl {
@@ -62,17 +57,6 @@ impl<'a> From<&'a str> for RepoUrl {
     }
 }
 
-pub struct SeparatorList<L, S> {
-    pub list: L,
-    pub sep: S,
-}
-
-impl<'a, S: AsRef<str>> SeparatorList<S, char> {
-    pub fn list(&self) -> Vec<&str> {
-        self.list.as_ref().split(self.sep).collect()
-    }
-}
-
 #[derive(Debug, Parser)]
 #[command(author, version, about, long_about = None)]
 pub struct Args {
@@ -81,8 +65,12 @@ pub struct Args {
     pub working_dir: PathBuf,
 
     /// Output directory for generated JSON files
-    #[arg(short = 'o', long = "output-dir", default_value = "./.blog-meta")]
+    #[arg(short = 'o', long = "output-dir", default_value = "./out")]
     pub target_dir: PathBuf,
+
+    /// Output directory for generated JSON files
+    #[arg(short = 'e', long = "file-extension", default_value = "html")]
+    pub ext: String,
 
     /// Print output to stdout instead of file
     #[arg(long = "stdout", default_value_t = false)]

@@ -15,6 +15,8 @@ pub enum FormatError {
     },
 
     #[error(transparent)]
+    TemplateError(#[from] handlebars::TemplateError),
+    #[error(transparent)]
     Render(#[from] handlebars::RenderError),
 
     #[error(transparent)]
