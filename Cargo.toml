@@ -45,7 +45,6 @@ syntect = { version = "5.0", features = [
 ] }
 
 handlebars = "5.0.0-beta"
-render = { path = "vendored/render/render" }
 
 git2 = "0.18"
 

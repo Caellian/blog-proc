@@ -61,14 +61,14 @@ impl<'a> From<&'a str> for RepoUrl {
 #[command(author, version, about, long_about = None)]
 pub struct Args {
     /// Directory used for processing posts
-    #[arg(short = 'w', long = "work-dir", default_value = ".")]
+    #[arg(short = 'w', long = "work-dir", default_value = "./posts")]
     pub working_dir: PathBuf,
 
     /// Output directory for generated JSON files
     #[arg(short = 'o', long = "output-dir", default_value = "./out")]
     pub target_dir: PathBuf,
 
-    /// Output directory for generated JSON files
+    /// Generated file extension
     #[arg(short = 'e', long = "file-extension", default_value = "html")]
     pub ext: String,
 

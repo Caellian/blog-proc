@@ -71,7 +71,7 @@ impl From<pulldown_cmark::HeadingLevel> for Style<'_> {
     }
 }
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Default)]
 pub enum SegmentContent<'a> {
     #[default]
     Empty,
@@ -79,7 +79,7 @@ pub enum SegmentContent<'a> {
     Other(Box<dyn Component>),
 }
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Default)]
 pub struct TextSegment<'a> {
     pub style: Style<'a>,
     pub content: SegmentContent<'a>,

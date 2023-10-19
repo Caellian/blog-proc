@@ -1,11 +1,10 @@
 use std::{convert::Infallible, default::Default, path::Path, str::FromStr, vec};
 
 use chrono::{DateTime, Utc};
-use render::Render;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    component::Parser,
+    component::{Component, Parser},
     error::{BlogError, FormatError},
 };
 
@@ -201,7 +200,7 @@ impl Post {
         let mut content = String::with_capacity(1024);
 
         for c in self.components() {
-            c.render_into(&mut content)
+            c.render(&mut content)
                 .expect("post component render should be infallible");
         }
 

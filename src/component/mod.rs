@@ -1,10 +1,8 @@
 use std::{
     borrow::Cow,
-    default,
     fmt::{Debug, Write},
 };
 
-use ::render::{html, rsx, Render};
 use strum::EnumDiscriminants;
 
 use crate::util::random_id;
